@@ -1,2 +1,3 @@
-# tf-to-torch
-The tools for translate the pretrained TensorFlow model checkpoint to the torch model
+# Tf2PyTorch
+The tools for translate the pretrained TensorFlow model checkpoint to the PyTorch model, especially for the MobileNet v1 (the paper can be found in [here](https://arxiv.org/abs/1704.04861)) in TensorFlow Slim (the Mobilenet V1 code original code can be found in [here](https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet_v1.py)). More models support will release in the future.
+The translated pytorch checkpoint (stored in *.pth file) can be loaded and used in correspoding MobileNet v1 pytorch implementation (I find MobileNet V1 pytorch implementation in [here](https://github.com/osmr/imgclsmob/blob/956b4ebab0bbf98de4e1548287df5197a3c7154e/pytorch/pytorchcv/models/mobilenet.py)), but I modified some implementation details in this srcipt, especially the final pooling choice and final pooling kernel size adjust strategy, which can be found in tensorflow vesion.
