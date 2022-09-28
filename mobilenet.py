@@ -11,10 +11,6 @@ import torch.nn as nn
 from common import conv3x3_block, dwsconv3x3_block
 
 
-pretrained_checkpoint_name = {'mobilenet_w1': 'mobilenet_w1-0895-7e1d739f.pth', 'mobilenet_w3d4': 'mobilenet_w3d4-1076-d801bcae.pth',
-                              'mobilenet_wd2': 'mobilenet_wd2-1355-41a21242.pth', 'mobilenet_wd4': 'mobilenet_wd4-2249-1ad5e8fe.pth'}
-
-
 class MobileNet(nn.Module):
     """
     MobileNet model from 'MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications,'
@@ -106,9 +102,6 @@ class MobileNet(nn.Module):
 
 
 def get_mobilenet(width_scale,
-                  model_name=None,
-                  pretrained=False,
-                  root=os.path.join("~", ".torch", "models"),
                   **kwargs):
     """
     Create MobileNet model with specific parameters.
@@ -116,13 +109,7 @@ def get_mobilenet(width_scale,
     Parameters:
     ----------
     width_scale : float
-        Scale factor for width of layers.
-    model_name : str or None, default None
-        Model name for loading pretrained model.
-    pretrained : bool, default False
-        Whether to load the pretrained weights for model.
-    root : str, default '~/.torch/models'
-        Location for keeping the model parameters.
+        Scale factor for width of layers. The same as depth depth_multiplier
     """
     channels = [[32], [64], [128, 128], [256, 256], [512, 512, 512, 512, 512, 512], [1024, 1024]]
     first_stage_stride = False
@@ -135,15 +122,6 @@ def get_mobilenet(width_scale,
         first_stage_stride=first_stage_stride,
         **kwargs)
 
-    if pretrained:
-        if (model_name is None) or (not model_name):
-            raise ValueError("Parameter `model_name` should be properly initialized for loading pretrained model.")
-        from .model_store import download_model
-        download_model(
-            net=net,
-            model_name=model_name,
-            local_model_store_dir_path=root)
-
     return net
 
 
@@ -151,60 +129,32 @@ def mobilenet_w1(**kwargs):
     """
     1.0 MobileNet-224 model from 'MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications,'
     https://arxiv.org/abs/1704.04861.
-
-    Parameters:
-    ----------
-    pretrained : bool, default False
-        Whether to load the pretrained weights for model.
-    root : str, default '~/.torch/models'
-        Location for keeping the model parameters.
     """
-    return get_mobilenet(width_scale=1.0, model_name="mobilenet_w1", **kwargs), pretrained_checkpoint_name['mobilenet_w1']
+    return get_mobilenet(width_scale=1.0, **kwargs)
 
 
 def mobilenet_w3d4(**kwargs):
     """
     0.75 MobileNet-224 model from 'MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications,'
     https://arxiv.org/abs/1704.04861.
-
-    Parameters:
-    ----------
-    pretrained : bool, default False
-        Whether to load the pretrained weights for model.
-    root : str, default '~/.torch/models'
-        Location for keeping the model parameters.
     """
-    return get_mobilenet(width_scale=0.75, model_name="mobilenet_w3d4", **kwargs), pretrained_checkpoint_name['mobilenet_w3d4']
+    return get_mobilenet(width_scale=0.75, **kwargs)
 
 
 def mobilenet_wd2(**kwargs):
     """
     0.5 MobileNet-224 model from 'MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications,'
     https://arxiv.org/abs/1704.04861.
-
-    Parameters:
-    ----------
-    pretrained : bool, default False
-        Whether to load the pretrained weights for model.
-    root : str, default '~/.torch/models'
-        Location for keeping the model parameters.
     """
-    return get_mobilenet(width_scale=0.5, model_name="mobilenet_wd2", **kwargs), pretrained_checkpoint_name['mobilenet_wd2']
+    return get_mobilenet(width_scale=0.5, **kwargs)
 
 
 def mobilenet_wd4(**kwargs):
     """
     0.25 MobileNet-224 model from 'MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications,'
     https://arxiv.org/abs/1704.04861.
-
-    Parameters:
-    ----------
-    pretrained : bool, default False
-        Whether to load the pretrained weights for model.
-    root : str, default '~/.torch/models'
-        Location for keeping the model parameters.
     """
-    return get_mobilenet(width_scale=0.25, model_name="mobilenet_wd4", **kwargs), pretrained_checkpoint_name['mobilenet_wd4']
+    return get_mobilenet(width_scale=0.25, **kwargs)
 
 
 def _calc_width(net):
@@ -249,6 +199,6 @@ def _test():
 
 if __name__ == "__main__":
     # _test()
-    net, _ = mobilenet_w1(in_size=128)
+    net = mobilenet_w1(in_size=128)
     import torch
     net.load_state_dict(torch.load("mobilenet_v1_128_tf2torch.pth"), strict=False)
